@@ -4,12 +4,30 @@ good = Corpus!
 bad = Corpus!
 
 io.input 'goodsentiment'
-bad\ProcessTextLine io.read '*all'
+good\ProcessTextLine io.read '*all'
 
 io.input 'badsentiment'
-good\ProcessTextLine io.read '*all'
+bad\ProcessTextLine io.read '*all'
 
 filter = Filter!
 filter\Load good, bad
 
-print filter\Test arg[1] 
+probability, interestingWords = filter\Test arg[1] 
+
+print "Results: of " .. arg[1]
+print ""
+print "Interesting Words:"
+print ""
+
+for i, pair in ipairs interestingWords
+	print string.format('%-20s', pair.Word), pair.Probability
+
+print ""
+print "Score: " .. probability
+
+if probability > 0.70
+	print "Determination: NEGATIVE"
+else
+	print "Determination: POSITIVE"
+
+print ""

@@ -107,7 +107,7 @@ export class Filter
 
 			Word = string.match(prob.Interest, Corpus.TokenPattern)
 
-			table.insert words, {:Word, Probability}
+			table.insert words, {:Word, :Probability}
 
 			index += 1
 
