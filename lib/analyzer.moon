@@ -97,12 +97,17 @@ export class Filter
 
 		table.sort probsSorted, (a, b) -> return a.Interest < b.Interest
 
+		words = {}
 		for i, prob in ipairs probsSorted
 
-			print prob.Interest, '', prob.Probability
+			Probability = prob.Probability
 
-			mult *= prob.Probability
-			comb *= (1 - prob.Probability)
+			mult *= Probability
+			comb *= (1 - Probability)
+
+			Word = string.match(prob.Interest, Corpus.TokenPattern)
+
+			table.insert words, {:Word, Probability}
 
 			index += 1
 
@@ -110,6 +115,6 @@ export class Filter
 				break
 
 
-		return mult / (mult + comb)
+		return mult / (mult + comb), words
 
 
