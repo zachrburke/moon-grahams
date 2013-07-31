@@ -8,7 +8,7 @@ Written using Moonscript, a language that compiles in the Lua scripting language
 To Use
 ======
 
-Bad sentiment contains tokens you want to filter against and good sentiment contains tokens you want to get through the filter.   By default the data just uses good and bad moview reviews for the good and bad sentiment respectively.  
+Bad sentiment contains tokens you want to filter against and good sentiment contains tokens you want to get through the filter.   By default the data just uses good and bad movie reviews for the good and bad sentiment respectively.  
 
 To try it out, just enter the command
 

@@ -28,9 +28,10 @@ export class Corpus
 	AddToken: (rawPhrase) =>
 		if (@Tokens[rawPhrase])
 			@Tokens[rawPhrase] = @Tokens[rawPhrase] + 1
-			@NumTokens = @NumTokens + 1
 		else
 			@Tokens[rawPhrase] = 1
+			@NumTokens = @NumTokens + 1
+			
 
 export class Filter
 
