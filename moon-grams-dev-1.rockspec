@@ -13,6 +13,7 @@ description = {
 	]],
 	homepage = "https://github.com/zach-binary/moon-grahams"
 	maintainer = "Zach Burke <madutilitybelt@gmail.com>",
+	license = "MIT"
 }
 dependencies = {
 	"lua >= 5.1"
