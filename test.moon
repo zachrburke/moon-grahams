@@ -1,4 +1,4 @@
-require "lib.analyzer"
+require "moongrahams"
 
 good = Corpus!
 bad = Corpus!

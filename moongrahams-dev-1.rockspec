@@ -1,4 +1,4 @@
-package = "moon-grahams"
+package = "moongrahams"
 version = "dev-1"
 source = {
 	url = "https://github.com/zach-binary/moon-grahams"
@@ -11,7 +11,7 @@ description = {
 		you can test on a blog if someone is writing about video games vs writing
 		about dieting products
 	]],
-	homepage = "https://github.com/zach-binary/moon-grahams"
+	homepage = "https://github.com/zach-binary/moon-grahams",
 	maintainer = "Zach Burke <madutilitybelt@gmail.com>",
 	license = "MIT"
 }
@@ -21,6 +21,6 @@ dependencies = {
 build = {
 	type = "builtin",
 	modules = {
-		["moon-grahams"] = "lib/analyzer.moon"
+		["moongrahams"] = "moongrahams/init.lua"
 	}
 }
