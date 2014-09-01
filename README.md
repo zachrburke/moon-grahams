@@ -5,6 +5,15 @@ A bayesion analyzer based on Paul Grahams essay on spam filtering found here htt
 
 Written using Moonscript, a language that compiles in the Lua scripting language.  Can be found here http://moonscript.org/
 
+Installation
+------------
+
+You can install the latest version using moonrocks
+
+```
+moonrocks install moongrahams
+```
+
 Usage
 -----
 
@@ -13,7 +22,8 @@ Here is an example of how you might load data into a moon grahams filter
 ```lua
 moongrahams = require('moongrahams')
 
-local good, bad = Corpus(), Corpus()
+local good, bad = moongrahams.Corpus(), moongrahams.Corpus()
+local filter = moongrahams.Filter()
 
 good:processTextLine("Hi there I'm Zach.  Nice to meet you!")
 bad:processTextLine("Extreme weight loss buy this revolutionary new product")
@@ -26,8 +36,9 @@ Then to test the content, you do the following:
 ```lua
 result = filter:analyze('Extreme Zach, Nice to be revolutionary')
 
-if result.probability > 0.80 then
-    print('This is spam!') -- probability is between 0 and 1, higher probability means the sentiment is negative, i.e. spam
+iif result.probability > 0.80 then
+    print('This is spam!') --probability is between 0.0 and 1.0
+end
 ```
 
 The result of an analyze call also has a table of the words used to calculate the overall probability, ordered by how "interesting" they are.  Interesting meaning how far each word's probability is from 0.5.
@@ -35,6 +46,7 @@ The result of an analyze call also has a table of the words used to calculate th
 ```lua
 for i, pair in ipairs(result.words) do
     print(string.format('%-20s', pair.word), pair.probability)
+end
 ```
 
 See it in Action!
