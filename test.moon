@@ -1,7 +1,6 @@
 import Filter, Corpus from require "moongrahams.init"
 
-good = Corpus!
-bad = Corpus!
+good, bad = Corpus!, Corpus!
 
 io.input 'goodsentiment'
 good\processTextLine io.read '*all'
