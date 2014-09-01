@@ -36,7 +36,7 @@ Then to test the content, you do the following:
 ```lua
 result = filter:analyze('Extreme Zach, Nice to be revolutionary')
 
-iif result.probability > 0.80 then
+if result.probability > 0.80 then
     print('This is spam!') --probability is between 0.0 and 1.0
 end
 ```
