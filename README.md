@@ -10,26 +10,32 @@ Usage
 
 Here is an example of how you might load data into a moon grahams filter
 
-    moongrahams = require('moongrahams')
+```lua
+moongrahams = require('moongrahams')
 
-    local good, bad = Corpus(), Corpus()
+local good, bad = Corpus(), Corpus()
 
-    good:processTextLine("Hi there I'm Zach.  Nice to meet you!")
-    bad:processTextLine("Extreme weight loss buy this revolutionary new product")
+good:processTextLine("Hi there I'm Zach.  Nice to meet you!")
+bad:processTextLine("Extreme weight loss buy this revolutionary new product")
 
-    filter:load(good, bad)
+filter:load(good, bad)
+```
 
 Then to test the content, you do the following:
 
-    result = filter:analyze('Extreme Zach, Nice to be revolutionary')
+```lua
+result = filter:analyze('Extreme Zach, Nice to be revolutionary')
 
-    if result.probability > 0.80 then
-        print('This is spam!') -- probability is between 0 and 1, higher probability means the sentiment is negative, i.e. spam
+if result.probability > 0.80 then
+    print('This is spam!') -- probability is between 0 and 1, higher probability means the sentiment is negative, i.e. spam
+```
 
 The result of an analyze call also has a table of the words used to calculate the overall probability, ordered by how "interesting" they are.  Interesting meaning how far each word's probability is from 0.5.
 
-    for i, pair in ipairs(result.words) do
-        print(string.format('%-20s', pair.word), pair.probability)
+```lua
+for i, pair in ipairs(result.words) do
+    print(string.format('%-20s', pair.word), pair.probability)
+```
 
 See it in Action!
 ======
