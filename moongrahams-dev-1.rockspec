@@ -1,7 +1,7 @@
 package = "moongrahams"
 version = "dev-1"
 source = {
-	url = "https://github.com/zach-binary/moon-grahams"
+	url = "git://github.com/zach-binary/moon-grahams.git"
 }
 description = {
 	summary = " lua/moonscript library for performing bayesian analysis",

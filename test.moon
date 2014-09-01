@@ -1,31 +1,31 @@
-require "moongrahams"
+import Filter, Corpus from require "moongrahams.init"
 
 good = Corpus!
 bad = Corpus!
 
 io.input 'goodsentiment'
-good\ProcessTextLine io.read '*all'
+good\processTextLine io.read '*all'
 
 io.input 'badsentiment'
-bad\ProcessTextLine io.read '*all'
+bad\processTextLine io.read '*all'
 
 filter = Filter!
-filter\Load good, bad
+filter\load good, bad
 
-probability, interestingWords = filter\Test arg[1] 
+result = filter\analyze arg[1] 
 
 print "Results: of " .. arg[1]
 print ""
 print "Interesting Words:"
 print ""
 
-for i, pair in ipairs interestingWords
-	print string.format('%-20s', pair.Word), pair.Probability
+for i, pair in ipairs result.words
+	print string.format('%-20s', pair.word), pair.probability
 
 print ""
-print "Score: " .. probability
+print "Score: " .. result.probability
 
-if probability > 0.70
+if result.probability > 0.70
 	print "Determination: NEGATIVE"
 else
 	print "Determination: POSITIVE"

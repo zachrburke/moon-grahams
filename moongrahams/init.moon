@@ -1,84 +1,84 @@
-
-config = {
-	GoodTokenWeight: 2
-	MinTokenCount: 0
-	MinCountForInclusion: 5
-	MinScore: 0.011
-	MaxScore: 0.99
-	LikelySpamScore: 0.9998
-	CertainSpamScore: 0.9999
-	CertainSpamCount: 10
-	InterestingWordCount: 15
-}
-
-export class Corpus
-
+class Corpus
 	-- Pattern to select words that don't begin with a number
-	@TokenPattern = '([a-zA-Z]%w+)%W*'
+	@TokenPattern: '([a-zA-Z]%w+)%W*'
 
 	new: =>
-		@Tokens = {}
-		@NumTokens = 0
+		@tokens = {}
+		@count = 0
 
-	ProcessTextLine: (line) =>
-		for match in string.gmatch line, @@TokenPattern
-			@AddToken match
+	processTextLine: (line) =>
+		for match in string.gmatch line, Corpus.TokenPattern
+			@addToken match
 
 
-	AddToken: (rawPhrase) =>
-		if (@Tokens[rawPhrase])
-			@Tokens[rawPhrase] = @Tokens[rawPhrase] + 1
+	addToken: (rawPhrase) =>
+		if (@tokens[rawPhrase])
+			@tokens[rawPhrase] = @tokens[rawPhrase] + 1
 		else
-			@Tokens[rawPhrase] = 1
-			@NumTokens = @NumTokens + 1
+			@tokens[rawPhrase] = 1
+			@count = @count + 1
 			
 
-export class Filter
+class Filter
+	new: =>
+		@minScore = 0.011
+		@maxScore = 0.99
+		@goodTokenWeight = 2
+		@minCountForInclusion = 0
+		@interestingWordCount = 15
+		@likelySpamScore = 0.9998
+		@certainSpamScore = 0.9999
+		@certainSpamCount = 10
+		@probabilities = {}
 
-	Load: (good, bad) => 
-		@Good = good
-		@Bad = bad
 
-		@CalculateProbabilities!
+	load: (good, bad) => 
+		@good = good
+		@bad = bad
 
-	CalculateProbabilities: () =>
-		@Probabilities = {}
+		@calculateProbabilities!
 
-		for token, score in pairs @Good.Tokens
-			@CalculateTokenProbability token
+	calculateProbabilities: () =>
+		@probabilities = {}
 
-		remainingTokens = {k,v for k, v in pairs @Bad.Tokens when not @Probabilities[k]}
+		for token, score in pairs @good.tokens
+			@calculateTokenProbability token
+
+		remainingTokens = {k,v for k, v in pairs @bad.tokens when not @probabilities[k]}
 
 		for token, score in pairs remainingTokens
-			@CalculateTokenProbability token
+			@calculateTokenProbability token
 
 
-	CalculateTokenProbability: (token) => 
+	calculateTokenProbability: (token) => 
 
-		g = if @Good.Tokens[token] then @Good.Tokens[token] * config.GoodTokenWeight else 0
-		b = if @Bad.Tokens[token] then @Bad.Tokens[token] else 0
+		g = if @good.tokens[token] then @good.tokens[token] * @goodTokenWeight else 0
+		b = if @bad.tokens[token] then @bad.tokens[token] else 0
 
-		if (g + b > config.MinCountForInclusion)
+		if (g + b > @minCountForInclusion)
 
-			goodFactor = math.min 1, g / @Good.NumTokens
-			badFactor = math.min 1, b / @Bad.NumTokens
+			goodFactor = math.min 1, g / (if @good.count > 0 then @good.count else 1)
+			badFactor = math.min 1, b / (if @bad.count > 0 then @bad.count else 1)
 
-			prob = math.max config.MinScore, math.min config.MaxScore, badFactor / (goodFactor + badFactor)
-			
+			prob = badFactor / (goodFactor + badFactor)
+			prob = math.max @minScore, math.min(@maxScore, prob)
+
 			if g == 0
-				prob = if b > config.CertainSpamCount then config.CertainSpamScore else config.LikelySpamScore
+				prob = if b > @certainSpamCount then @certainSpamScore else @likelySpamScore
 
-			@Probabilities[token] = prob
+			@probabilities[token] = prob
 
-	Test: (message) =>
+			return prob
+
+	analyze: (message) =>
 
 		probs = {}
 		index = 0
 
 		for token in string.gmatch message, Corpus.TokenPattern
-			if @Probabilities[token] 
+			if @probabilities[token] 
 
-				prob = @Probabilities[token]
+				prob = @probabilities[token]
 
 				-- here we're storing the 'interestingness' of the word as a key
 				key = string.format '%.5f', tostring(0.5 - math.abs (0.5 - prob)) 
@@ -93,29 +93,32 @@ export class Filter
 
 		-- sort the words of a message by how interesting they are, not probability
 		probsSorted = {}
-		for Interest, Probability in pairs probs
-			table.insert probsSorted, {:Interest, :Probability}
+		for interest, probability in pairs probs
+			table.insert probsSorted, {:interest, :probability}
 
-		table.sort probsSorted, (a, b) -> return a.Interest < b.Interest
+		table.sort probsSorted, (a, b) -> return a.interest < b.interest
 
 		words = {}
 		for i, prob in ipairs probsSorted
 
-			Probability = prob.Probability
+			probability = prob.probability
 
-			mult *= Probability
-			comb *= (1 - Probability)
+			mult *= probability
+			comb *= (1 - probability)
 
-			Word = string.match(prob.Interest, Corpus.TokenPattern)
+			word = string.match(prob.interest, Corpus.TokenPattern)
 
-			table.insert words, {:Word, :Probability}
+			table.insert words, {:word, :probability}
 
 			index += 1
 
-			if index > config.InterestingWordCount
+			if index > @interestingWordCount
 				break
 
 
-		return mult / (mult + comb), words
+		return {
+			probability: mult / (mult + comb)
+			words: words
+		}
 
-
+return { :Corpus, :Filter }
